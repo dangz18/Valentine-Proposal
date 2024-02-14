@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine's Day Surprise</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 100px;
+        position: relative;
+        overflow: hidden;
+		background-image: url('background.jpg');
+    }
+    #yes-btn {
+        height: 50px;
+		width: 200px;
+        margin-top: 10px;
+        font-size: 18px;
+        cursor: pointer;
+		background-color: green;
+		border: none;
+		border-radius: 20px;
+		margin-right: 250px;
+    }
+    #no-btn {
+        height: 50px;
+		width: 100px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        position: absolute;
+		background-color: red;
+		border: none;
+		border-radius: 20px;
+    }
+    .default-image{
+        margin-top: 20px;
+        width: 300px;
+    }
+	.final-image {
+        display: none;
+        width: 300px;
+		margin-left: auto;
+		margin-right: auto;
+    }
+	p{
+		font-size: 40px;
+	}
+</style>
+</head>
+<body>
+
+<img class="default-image" src="Heart.png" alt="Default Image">
+<img class="final-image" src="kiss.jpg" alt="Final Image">
+
+<p id="text">WILL YOU BE MY VALENTINE???</p>
+
+<button id="yes-btn">Yes, of course</button>
+<button id="no-btn">No!!!</button>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const defaultImage = document.querySelector('.default-image');
+    const finalImage = document.querySelector('.final-image');
+	const text = document.getElementById('text');
+	const audio = new Audio("./audio.mp3");
+
+    yesBtn.addEventListener('click', () => {
+        defaultImage.style.display = 'none';
+        finalImage.style.display = 'block';
+        noBtn.style.display = 'none';
+        yesBtn.style.display = 'none';
+		text.innerHTML = "Yeyyyyy";
+		audio.play();
+		var end = Date.now() + (15 * 1000);
+
+		// go Buckeyes!
+		var colors = ['#bb0000', '#ffffff'];
+
+		(function frame() {
+		  confetti({
+			particleCount: 2,
+			angle: 60,
+			spread: 55,
+			origin: { x: 0 },
+			colors: colors
+		  });
+		  confetti({
+			particleCount: 2,
+			angle: 120,
+			spread: 55,
+			origin: { x: 1 },
+			colors: colors
+		  });
+
+		  if (Date.now() < end) {
+			requestAnimationFrame(frame);
+		  }
+		}());
+    });
+
+    noBtn.addEventListener('mouseenter', moveNoButton);
+
+    function moveNoButton() {
+        let collision = true;
+        while (collision) {
+            const randomX = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const randomY = Math.random() * (window.innerHeight / 2);
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            collision = checkCollision();
+        }
+    }
+
+    function checkCollision() {
+        const yesRect = yesBtn.getBoundingClientRect();
+        const noRect = noBtn.getBoundingClientRect();
+        const defaultImgRect = defaultImage.getBoundingClientRect();
+        const finalImgRect = finalImage.getBoundingClientRect();
+
+        return (
+            intersect(yesRect, noRect) ||
+            intersect(defaultImgRect, noRect) ||
+            intersect(finalImgRect, noRect)
+        );
+    }
+
+    function intersect(rect1, rect2) {
+        return !(
+            rect1.right < rect2.left ||
+            rect1.left > rect2.right ||
+            rect1.bottom < rect2.top ||
+            rect1.top > rect2.bottom
+        );
+    }
+</script>
+
+</body>
+</html>
